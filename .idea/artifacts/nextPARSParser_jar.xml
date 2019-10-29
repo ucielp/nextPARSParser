@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="nextPARSParser:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/nextPARSParser_jar</output-path>
+    <root id="archive" name="nextPARSParser.jar">
+      <element id="module-output" name="nextPARSParser" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/htsjdk-2.20.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-jexl-2.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-logging-1.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/snappy-java-1.1.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-compress-1.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/xz-1.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/ngs-java-2.9.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/argparse4j-0.8.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

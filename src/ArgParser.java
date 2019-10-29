@@ -12,7 +12,9 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 
 class ArgParser {
-    private static ArgumentParser parser = ArgumentParsers.newArgumentParser("Checksum").defaultHelp(true).description("PARSparser");
+    //private static ArgumentParser parser = ArgumentParsers.newArgumentParser("Checksum").defaultHelp(true).description("PARSparser");
+    private static ArgumentParser parser = ArgumentParsers.newFor("Checksum").build().defaultHelp(true).description("PARSParser");
+
     //static List<FileHandler> fileList = new ArrayList<>();
     private double minqual;
     private int mincount;
@@ -20,14 +22,14 @@ class ArgParser {
     private int qualStringency;
     private String outfileLocation;
 
-    private BEDHandler bedHandler;
-    private BamHandler bamHandler;
+    private eu.ernstthuer.BEDHandler bedHandler;
+    private eu.ernstthuer.BamHandler bamHandler;
 
-    BEDHandler getBedHandler() {
+    eu.ernstthuer.BEDHandler getBedHandler() {
         return bedHandler;
     }
 
-    BamHandler getBamHandler() {
+    eu.ernstthuer.BamHandler getBamHandler() {
         return bamHandler;
     }
 
@@ -59,13 +61,13 @@ class ArgParser {
                 .help("reads are counted for base upstream, default -1 (since version 0.67b) process before cutting site").required(false).setDefault(-1).dest("offset");
         parser.addArgument("-out", "--outfile")
                 .help("output in tsv file format containing Transcript identities and coverage per position").required(false).setDefault("Output_Glory_To_Ernst.tsv").dest("out");
-        parser.addArgument("-q", "--mapq")
-                .help("min mapping quality,  default 0").required(false).setDefault(0).dest("mapq");
+        parser.addArgument("-q", "--minqual")
+                .help("min mapping quality,  default 0").required(false).setDefault(0).dest("minqual");
         parser.addArgument("-m", "--mincount")
                 .help("min TOTAL counts for given transcript, default 5").required(false).setDefault(5).dest("mincount");
         parser.addArgument("-i", "--ignore").help("analyze transcripts without name,  default true").required(false).setDefault(true).dest("ignore");
         parser.addArgument("-S", "--SamFlags")
-                .help("COnsider sam-flags for multi mapping exclusion,  default true checks SAM flags for multi mapping indication").required(false).setDefault(true).dest("samflag");
+                .help("Consider sam-flags for multi mapping exclusion,  default true checks SAM flags for multi mapping indication").required(false).setDefault(true).dest("samflag");
         parser.addArgument("-Q", "--QualityStringency")
                 .help("Set Stringency for output quality.  1 ignores CIGAR string problems. 2 ignores mapping issues and CIGAR, default 0 cuts >1 mutations in CIGAR and uses quality thresolds").required(false).setDefault(0).dest("stringency");
 
@@ -74,6 +76,11 @@ class ArgParser {
         try {
             ns = parser.parseArgs(args);
 
+            try {
+                minqual = Double.parseDouble(ns.get("minqual"));
+            }catch (ClassCastException e){
+                minqual = ns.get("minqual");
+            }
             try {
                 mincount = Integer.parseInt(ns.get("mincount"));
             }catch (ClassCastException e){
@@ -109,7 +116,7 @@ class ArgParser {
                     break;
             }
 
-            //System.out.println(offset + "  " + mincount);
+            //System.out.println(offset + "  " + mincount + "  " + minqual);
 
             outfileLocation = ns.get("out");
 
@@ -122,8 +129,8 @@ class ArgParser {
         }
 
         try {
-            bedHandler = new BEDHandler(ns.get("inBED").toString(), "BED", ns.get("ignore"));
-            bamHandler = new BamHandler(ns.get("inBAM").toString(), "BAM", ns.get("samflag"), offset, qualStringency);
+            bedHandler = new eu.ernstthuer.BEDHandler(ns.get("inBED").toString(), "BED", ns.get("ignore"));
+            bamHandler = new eu.ernstthuer.BamHandler(ns.get("inBAM").toString(), "BAM", ns.get("samflag"), offset, qualStringency);
         } catch (NullPointerException e) {
             System.out.println(" File not found exception ");
         }
