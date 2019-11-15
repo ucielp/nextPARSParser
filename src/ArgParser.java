@@ -20,6 +20,7 @@ class ArgParser {
     private int mincount;
     private int offset;
     private int qualStringency;
+    private boolean samflag;
     private String outfileLocation;
 
     private eu.ernstthuer.BEDHandler bedHandler;
@@ -41,6 +42,10 @@ class ArgParser {
         return mincount;
     }
 
+    public boolean getSamflag() {
+        return samflag;
+    }
+
     public int getOffset() {
         return offset;
     }
@@ -58,16 +63,16 @@ class ArgParser {
         parser.addArgument("-b", "--bed")
                 .help("input file in BED file format").required(true).dest("inBED");
         parser.addArgument("-o", "--offset")
-                .help("reads are counted for base upstream, default -1 (since version 0.67b) process before cutting site").required(false).setDefault(-1).dest("offset");
+                .help("reads are counted for base upstream, default -1 (since version 0.67b) process before cutting site").required(false).setDefault(0).dest("offset");
         parser.addArgument("-out", "--outfile")
                 .help("output in tsv file format containing Transcript identities and coverage per position").required(false).setDefault("Output_Glory_To_Ernst.tsv").dest("out");
         parser.addArgument("-q", "--minqual")
-                .help("min mapping quality,  default 0").required(false).setDefault(0).dest("minqual");
+                .help("min mapping quality,  default 0").required(false).setDefault(0.0).dest("minqual");
         parser.addArgument("-m", "--mincount")
                 .help("min TOTAL counts for given transcript, default 5").required(false).setDefault(5).dest("mincount");
         parser.addArgument("-i", "--ignore").help("analyze transcripts without name,  default true").required(false).setDefault(true).dest("ignore");
         parser.addArgument("-S", "--SamFlags")
-                .help("Consider sam-flags for multi mapping exclusion,  default true checks SAM flags for multi mapping indication").required(false).setDefault(true).dest("samflag");
+                .help("Consider sam-flags for multi mapping exclusion,  default true checks SAM flags for multi mapping indication").required(false).dest("samflag");
         parser.addArgument("-Q", "--QualityStringency")
                 .help("Set Stringency for output quality.  1 ignores CIGAR string problems. 2 ignores mapping issues and CIGAR, default 0 cuts >1 mutations in CIGAR and uses quality thresolds").required(false).setDefault(0).dest("stringency");
 
@@ -91,6 +96,12 @@ class ArgParser {
                 offset = Integer.parseInt(ns.get("offset"));
             }catch (ClassCastException e){
                 offset = ns.get("offset");
+            }
+
+            try {
+                samflag = Boolean.parseBoolean(ns.get("samflag"));
+            }catch (ClassCastException e){
+                samflag = ns.get("samflag");
             }
 
             try {
@@ -130,7 +141,7 @@ class ArgParser {
 
         try {
             bedHandler = new eu.ernstthuer.BEDHandler(ns.get("inBED").toString(), "BED", ns.get("ignore"));
-            bamHandler = new eu.ernstthuer.BamHandler(ns.get("inBAM").toString(), "BAM", ns.get("samflag"), offset, qualStringency);
+            bamHandler = new eu.ernstthuer.BamHandler(ns.get("inBAM").toString(), "BAM", Boolean.parseBoolean(ns.get("samflag")), offset, qualStringency);
         } catch (NullPointerException e) {
             System.out.println(" File not found exception ");
         }

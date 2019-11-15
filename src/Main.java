@@ -7,11 +7,12 @@ public class Main {
 
 
     public static void main(String[] args) {
-        System.out.println("[STATUS] Running Ernsts amazing PARS parser   v0.67.b");
+        System.out.println("[STATUS] Running nextPARS parser v0.69");
 
         // get arguments
         ArgParser parser = new ArgParser(args);
-        System.out.println("[STATUS] Running with parameters  offset : " + parser.getOffset() + "   minCount for Coverage : " + parser.getMincount() + "  minQual for reads : " + parser.getMinqual());
+        //System.out.println("[STATUS] Running with parameters  offset : " + parser.getOffset() + "   minCount for Coverage : " + parser.getMincount() + "  minQual for reads : " + parser.getMinqual());
+        System.out.println("[STATUS] Running with parameters  offset : " + parser.getOffset() + "   minCount for Coverage : " + parser.getMincount() + "   SAMflag : " + parser.getSamflag() + "  minQual for reads : " + parser.getMinqual());
 
         // Handlers take care of the input files Bed and BAMoverage
         BEDHandler bedHandler = parser.getBedHandler();
