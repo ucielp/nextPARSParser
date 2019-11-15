@@ -59,7 +59,7 @@ class OutfileWriter {
                 }
 
             }
-            System.out.println("[FINISHED] Output " + geneCount + " transcripts written to file in total");
+            System.out.println("[FINISHED] Output " + writeCount + " transcripts written to file in total");
 
         } catch (IOException e) {
             System.out.println("[ERROR] Error in writing to file  " + e.getCause());
