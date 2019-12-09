@@ -63,7 +63,7 @@ class ArgParser {
         parser.addArgument("-b", "--bed")
                 .help("input file in BED file format").required(true).dest("inBED");
         parser.addArgument("-o", "--offset")
-                .help("reads are counted for base upstream, default -1 (since version 0.67b) process before cutting site").required(false).setDefault(0).dest("offset");
+                .help("reads are counted for base upstream, default 0 (since version 0.69) process before cutting site").required(false).setDefault(0).dest("offset");
         parser.addArgument("-out", "--outfile")
                 .help("output in tsv file format containing Transcript identities and coverage per position").required(false).setDefault("Output_Glory_To_Ernst.tsv").dest("out");
         parser.addArgument("-q", "--minqual")
