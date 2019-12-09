@@ -1,0 +1,12 @@
+conda create --name nextPARSParser  python=3 
+source activate nextPARSParser
+
+# Packages
+conda install -c bioconda htseq
+ 
+# Usage
+cd /home/uchorostecki/lab/software/nextPARSParser/
+time  python parser_test.py \
+	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/mapping/1-V1-23_35265_ATCACG.fastq.gzAligned.sortedByCoord.out.bam \
+	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/DB/C_parapsilosis_plus_individual.gff \
+	-o /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/ 1_all.csv
