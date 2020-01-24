@@ -35,6 +35,12 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 
 	# t = time.process_time()
 
+	# TODO: Mirar si con esto puedo evitar hacer el HACK (creo que si)
+	# CIGAR match characters (including alignment match, sequence match, and
+	# sequence mismatch
+	# Ref https://drive5.com/usearch/manual/cigar.html
+	com = ('M', '=', 'X')
+	
 	try:
 		for f in gff:
 			# feature type (3rd column in GFF file)
@@ -99,8 +105,9 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 
 	# TODO remove this line
 	# and remove itertools
-	for align in itertools.islice( bam, 1000000 ):
-	# ~ for align in bam:
+	# ~ for align in itertools.islice( bam, 100000):
+	for align in bam:
+
 		
 		if k > 0 and k % 100000 == 0 and not quiet:
 			sys.stderr.write("%d SAM alignment records processed.\n" % k)
@@ -108,27 +115,59 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 		
 		k += 1
 		
+
+		
+		# ~ for co in align.cigar:
+			# ~ # cut long cigar strings, only the best of reads, maximum one variation
+			# ~ if co.type not in com and co.size > 0:
+				# ~ print("NO",co,co.type,co.size,co.ref_iv)
+				# ~ continue
+			# ~ else:
+				# ~ print("SI",co,co.type,co.size,co.ref_iv)
+
+					# ~ # print ("g_ids",g_ids,iv_f.start)
+		
+		
 		if not align.aligned:
 			counts[ "_unmapped" ] += 1
 			continue
+
+		# TODO: Remove Hack			
+		if align.iv.length > 51:
+			counts[ "__too_long" ] += 1
+			# ~ for co in align.cigar:
+				# ~ # cut long cigar strings, only the best of reads, maximum one variation
+				# ~ if co.type not in com and co.size > 0:
+					# ~ print("NO",co,co.type,co.size,co.ref_iv)
+				# ~ else:
+					# ~ print("SI",co,co.type,co.size,co.ref_iv)
+			continue
 		
 		
+		# ~ iv_seq = (co.ref_iv for co in align.cigar if co.type in com
+                                  # ~ and co.size > 0)
+ 
+		# ~ fs = set()
+
+		# ~ for iv in iv_seq:
+			# ~ if iv.chrom not in features.chrom_vectors:
+				# ~ raise UnknownChrom
+			# ~ for iv2, fs2 in features[iv].steps():
+				# ~ fs = fs.union(fs2)
+				
 		if align.aQual < minaqual:
 			counts[ "__too_low_aQual" ] += 1
 			continue
-
-		# cut long cigar strings, only the best of reads, maximum one variation
-		for co in align.cigar:
-			if co.size > 2:
-				counts[ "__cigar" ] += 1
-				continue
 
 		gene_ids = set()
 		
 		# interval, gen
 		for iv_f, gene in features[ align.iv ].steps():
 			# Add element to the set.
+			# ~ print ("A",iv_f,gene)
 			gene_ids |= gene
+
+		# overlap_mode (same as htseq-count union)
 
 		if len(gene_ids) == 1:
 			gene_id = list(gene_ids)[0]
@@ -144,30 +183,24 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 					
 			elif multimapped_mode == 'all':
 				for g_ids in list(gene_ids):
-					# print ("g_ids",g_ids,iv_f.start)
 					gene_id = g_ids
 					counts[ gene_id, iv_f.start] += 1
 					genes_set |= gene
 			else:
 				sys.exit("Illegal multimap mode.")
-                            
-
-			# ~ else:
-				# ~ # TODO IMPORTANT
-				# ~ # In my case I want to count for all, i have to do a for loop
-				# ~ # gene_id = list(gene_ids)[0]
-				# ~ # gene_id = list(gene_ids)[1]
-				# ~ # counts[ gene_id, iv.start] += 1
-		
+	
 	# elapsed_time = time.process_time() - t
 	# print("ELAPSED2 : ",elapsed_time)
 	
 	# GET RESULTS
 	# New dictionary sort on first element of the key and then on the second element
 	# sorted_counts = collections.OrderedDict(sorted(counts.items(),key = lambda i: (i[0][0], i[0][1])))
-	print ("Length: ",len(counts))
+	# ~ print ("Length: ",len(counts))
 	
-	# New list sort on first element of the key and then on the second element
+	# ~ for a in counts:
+		# ~ print (a)
+	
+	# New list sort on gene_name and then on nt position on that gene
 	sorted_counts = sorted(counts.items(),key = lambda i: (i[0][0], i[0][1]))
 
 	last_gene_id = ''
@@ -180,9 +213,10 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	
 	# TODO rename this variable to number of ??
 	p = 0
-	for (index, thing) in enumerate(sorted_counts[:-1]):
+	for (index, gene_pos_count) in enumerate(sorted_counts[:-1]):
 		if index < len(sorted_counts):
-			current, next_ = thing, sorted_counts[index + 1]
+			current, next_ = gene_pos_count, sorted_counts[index + 1]
+			
 			# print("CN",current, next_)			
 			# Gene ID and read position
 			gene_id_pos = current[0]
@@ -197,13 +231,6 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 		# _unmapped _no_feature or _ambiguous
 		if isinstance(gene_id_pos, str):
 			additional_data.append((gene_id_pos,read_counts))
-			
-			# TODO:Remove pandas
-			# df = pd.DataFrame(data=end_table)
-			# df.to_csv(FILE_TO_WRITE, mode='a', index=False,header=False)
-			# Append mode
-			write_to_file(out_file,additional_data)
-			
 			
 		else:
 			p += 1
@@ -236,9 +263,8 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 			
 			# print(gene_id)
 			reads = []
+			# reads.append(gene_id+"\t")
 			reads.append(gene_id)
-			# reads.insert(0, gene_id)
-
 			last_gene_id = gene_id
 		
 		
@@ -254,10 +280,12 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 				# TODO llenar con 0 al principio
 				# reads.extend(repeat(0, position - i))
 				# i = position
+				# ~ print(position-i,gene_id,i,position)
 				reads.append(0)
 				i+=1
 			if i == position:
-				# print("pos A: ", i, "pos ", position, "counts: ",sorted_counts[gene_id_pos], end = '\n')
+				# print("pos A: ", i, "pos ", position, "gene_id_start",gene_id_start, "counts: ",read_counts, end = '\n')
+				# print(current)
 				# reads.append(sorted_counts[gene_id_pos])
 				reads.append(read_counts)
 				# reads.insert(position, sorted_counts[gene_id_pos])
@@ -286,6 +314,8 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 					# ~ i+=1
 			
 			# Add reads to the final
+			#reads[0] = ''.join(str(reads[0:2]))
+
 			list_of_reads.append(reads)
 		
 	# Last position of the file
@@ -332,8 +362,8 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	# df.to_csv(FILE_TO_WRITE, mode='a', index=False,header=False)
 	
 	# Append mode
+	write_to_file(out_file,additional_data)
 	write_to_file(out_file,list_of_reads)
-
 	# To test I add header 
 	# df.to_csv(FILE_TO_WRITE, index=False, mode='a')
 
