@@ -66,17 +66,14 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	genes_set = set()
 
 	# TODO remove this line
-	for align in itertools.islice( bam, 100000):
-	# ~ for align in bam:
-
-		
+	# ~ for align in itertools.islice( bam, 100000):
+	for align in bam:
 		if k > 0 and k % 100000 == 0 and not quiet:
 			sys.stderr.write("%d SAM alignment records processed.\n" % k)
 			sys.stderr.flush()
 		
 		k += 1
 		
-
 		# TODO: Remove this
 		# ~ for co in align.cigar:
 			# ~ # cut long cigar strings, only the best of reads, maximum one variation
@@ -130,9 +127,7 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 				sys.exit("Illegal multimap mode.")
 	
 	# GET RESULTS
-	# TODO: Remove HACK
-	counts[ "_zzz" ] = 0
-
+	
 	# New dictionary sorted on gene_name and then on nt position on that gene
 	sorted_counts = sorted(counts.items(),key = lambda i: (i[0][0], i[0][1]))
 
@@ -140,32 +135,18 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	additional_data = []
 	list_of_reads = []
 	
-	# ~ my_iter = iter(sorted_counts)
-	
-	# ~ for i in my_iter:
-		# ~ print(i)
-		# ~ next(my_iter)
+	for (index, gene_pos_count) in enumerate(sorted_counts):
 		
-	# ~ iterator = iter(sorted_counts)
-	# ~ try:
-		# ~ while True:
-			# ~ item = next(iterator)
-			# ~ print(item)
-	# ~ except StopIteration:
-		# ~ pass
-	# ~ finally:
-		# ~ del iterator
-
-
-	for (index, gene_pos_count) in enumerate(sorted_counts[:-1]):
-		if index < len(sorted_counts):
+		if gene_pos_count != sorted_counts[-1]:
 			current, next_ = gene_pos_count, sorted_counts[index + 1]
+		else:
+			current, next_ = gene_pos_count, 'END'
+		
+		# Gene ID and read position
+		gene_id_pos = current[0]
+		# Read counts for current position
+		read_counts = current[1]
 			
-			# print("CN",current, next_)			
-			# Gene ID and read position
-			gene_id_pos = current[0]
-			# Read counts for current position
-			read_counts = current[1]
 			
 		# _unmapped _no_feature or _ambiguous
 		if isinstance(gene_id_pos, str):
@@ -221,13 +202,7 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 				i+=1
 
 			list_of_reads.append(reads)
-		
-	# Last position of the file
-	# TODO put this one
-	gene_id_pos = next_[0]
-	read_counts = next_[1]
-	
-	
+
 	# Write to file
 	write_to_file(out_file,additional_data)
 	write_to_file(out_file,list_of_reads)
