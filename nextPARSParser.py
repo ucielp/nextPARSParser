@@ -4,25 +4,8 @@ import sys
 import argparse
 import collections
 import csv
-import time
-
-
-# source activate nextPARSParser
-# python parser_test.py
-
-# TODO
-# Check for perfect match
-
-
-# Experienced Python developers will recognize that the for loop can be replaced with a single line using a generator comprehension and the reduce function:
-# sorted(set.union(*[val for iv, val in gas[ read_iv ].steps()]))
-
-
 
 features = HTSeq.GenomicArrayOfSets( "auto", stranded=True )
-# TODO remove this line
-# features = HTSeq.GenomicArrayOfSets("auto", stranded != "no")
-
 features_properties = dict()
 
 
@@ -32,9 +15,7 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	gff = HTSeq.GFF_Reader( gtf_file, end_included=True )
 	k = 0
 
-	# t = time.process_time()
-
-	# TODO: Mirar si con esto puedo evitar hacer el HACK (creo que si)
+	# TODO: Check this to avoid the HACK
 	# CIGAR match characters (including alignment match, sequence match, and
 	# sequence mismatch
 	# Ref https://drive5.com/usearch/manual/cigar.html
@@ -42,16 +23,8 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 	
 	try:
 		for f in gff:
+			
 			# feature type (3rd column in GFF file)
-			
-			# TODO Esto lo  puse solo para un test
-			# Pero contig no va y tengo que ver porqué
-			# No va con todos porque mapea en varios lados
-
-			# TODO: Remove this
-			# if f.type != 'contig':
-			# if f.type == 'exon':
-			
 			if f.type == feature_type:
 				try:
 					feature_id = f.attr[id_attribute]
@@ -157,18 +130,34 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 				sys.exit("Illegal multimap mode.")
 	
 	# GET RESULTS
-	
-	# New dictionary sort on gene_name and then on nt position on that gene
+	# TODO: Remove HACK
+	counts[ "_zzz" ] = 0
+
+	# New dictionary sorted on gene_name and then on nt position on that gene
 	sorted_counts = sorted(counts.items(),key = lambda i: (i[0][0], i[0][1]))
 
 	last_gene_id = ''
 	additional_data = []
 	list_of_reads = []
 	
-	my_iter = iter(sorted_counts)
+	# ~ my_iter = iter(sorted_counts)
 	
+	# ~ for i in my_iter:
+		# ~ print(i)
+		# ~ next(my_iter)
+		
+	# ~ iterator = iter(sorted_counts)
+	# ~ try:
+		# ~ while True:
+			# ~ item = next(iterator)
+			# ~ print(item)
+	# ~ except StopIteration:
+		# ~ pass
+	# ~ finally:
+		# ~ del iterator
+
+
 	for (index, gene_pos_count) in enumerate(sorted_counts[:-1]):
-		# print(gene_pos_count)
 		if index < len(sorted_counts):
 			current, next_ = gene_pos_count, sorted_counts[index + 1]
 			
@@ -178,11 +167,6 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 			# Read counts for current position
 			read_counts = current[1]
 			
-	
-		# t = time.process_time()
-		
-		# print("gene_id_pos", gene_id_pos)
-		
 		# _unmapped _no_feature or _ambiguous
 		if isinstance(gene_id_pos, str):
 			additional_data.append((gene_id_pos,read_counts))
@@ -237,12 +221,12 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 				i+=1
 
 			list_of_reads.append(reads)
-			# print(reads[0])
 		
 	# Last position of the file
 	# TODO put this one
 	gene_id_pos = next_[0]
 	read_counts = next_[1]
+	
 	
 	# Write to file
 	write_to_file(out_file,additional_data)
