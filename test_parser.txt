@@ -1,0 +1,22 @@
+# Test
+cd /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/
+awk -F";" '{print $1"\t"length($0)}' 1_all.csv | sort -k2n
+CPAR2_600280-T-E1       1365454
+CPAR2_600260-T-E1       1375288
+CPAR2_600240-T-E1       1383066
+CPAR2_600390-T-E1       1386244
+CPAR2_600380-T-E1       1388712
+CPAR2_600370-T-E1       1389852
+CPAR2_600220-T-E1       1395871
+CPAR2_600210-T-E1       1396735
+CPAR2_600180-T-E1       1409792
+CPAR2_600170-T-E1       1418716
+CPAR2_600160-T-E1       1421266
+CPAR2_600150-T-E1       1424116
+CPAR2_600130-T-E1       1431376
+CPAR2_600120-T-E1       1433746
+CPAR2_600110-T-E1       1443948
+CPAR2_600100-T-E1       1448077
+CPAR2_600070-T-E1       1469339
+
+awk -F";" '{print $1"\t"length($0)}' new_1_all.csv | sort -k2n
