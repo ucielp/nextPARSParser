@@ -20,3 +20,34 @@ CPAR2_600100-T-E1       1448077
 CPAR2_600070-T-E1       1469339
 
 awk -F";" '{print $1"\t"length($0)}' new_1_all.csv | sort -k2n
+
+-----------------------
+
+Saccharomyces cerevisiae S288C 
+# GENOME 
+# /home/uchorostecki/lab/tg/tgabaldon/PROJECTS/NONCODEVOL/DATA/SEQS/GENOMES/S288C/
++TETp4p6, TETp9-9.1, SRA, B1, and U1
+https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/
+
+# FASTQ
+# /home/uchorostecki/lab/tg/sequencing_data/repository/RNAseq/2014/2014-04-29/
+
+# run_PARS_mapping.sh
+# /home/uchorostecki/lab/tg/jwillis/lncRNA_DATA/RNA2D/
+
+# #BAM files
+/home/uchorostecki/lab/tg/jwillis/lncRNA_PROJECT/2017-01-19
+
+
+python nextPARSParser.py 
+ATCACG.fastq.gzAligned.sortedByCoord.out.bam …./C_parapsilosis_plus_individual.gff -o ….csv
+python nextPARSParser.py \
+	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/mapping/1-V1-23_35265_ATCACG.fastq.gzAligned.sortedByCoord.out.bam \
+	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/DB/C_parapsilosis_plus_individual.gff \
+	-o /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/1_all.csv \
+	-t exon \
+	
+	
+	
+	
+

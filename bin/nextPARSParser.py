@@ -9,8 +9,7 @@ features = HTSeq.GenomicArrayOfSets( "auto", stranded=True )
 features_properties = dict()
 
 
-def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,id_attribute,multimapped_mode,stranded,minaqual,quiet):
-
+def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,id_attribute,multimapped_mode,stranded,minaqual,minlength,quiet):
 
 	gff = HTSeq.GFF_Reader( gtf_file, end_included=True )
 	k = 0
@@ -91,7 +90,7 @@ def count_reads_by_position_in_features(bam_file,gtf_file,out_file,feature_type,
 			continue
 
 		# TODO: Remove Hack			
-		if align.iv.length > 51:
+		if align.iv.length > minlength:
 			# counts[ "_too_long" ] += 1
 			continue
 		
@@ -246,15 +245,14 @@ def main():
 			"minimum value (default: 10). MAPQ is the 5th column of a SAM/BAM " +
 			"file and its usage depends on the software used to map the reads.")
 	
-	 # ~ pa.add_argument(
-			# ~ "-o", "--samout", type=str, dest="samouts",
-			# ~ action='append',
-			# ~ default=[],
-			# ~ help="Write out all SAM alignment records into " +
-			# ~ "SAM files (one per input file needed), annotating each line " +
-			# ~ "with its feature assignment (as an optional field with tag 'XF')")
 	pa.add_argument(
-			"-o", "--samout", type=str, dest="samouts",
+			"-l", "--minlength", type=int, dest="minlength",
+			default=51,
+			help="Skip all reads with length longer than the given " +
+			"minimum value (default: 51). ")
+	
+	pa.add_argument(
+			"-o", "--samout", type=str, dest="samouts", default="out.csv",
 			help="Write out all SAM alignment records into " +
 			"SAM files (one per input file needed), annotating each line " +
 			"with its feature assignment (as an optional field with tag 'XF')")
@@ -275,20 +273,21 @@ def main():
 		# In my case i will define default all for nonunique - multimapped
 	pa.add_argument(
 		"--multimapped", dest="multimapped", type=str,
-		# TODO set default none
 		choices=("none", "all"), default="all",
 		help="Whether to score reads that are not uniquely aligned " +
 		"or ambiguously assigned to features")
-	# TODO implement this
-	# ~ pa.add_argument(
-		# ~ "--supplementary-alignments", dest="supplementary_alignments", type=str,
-		# ~ choices=("score", "ignore"), default="ignore",
-		# ~ help="Whether to score supplementary alignments (0x800 flag)")
 	
+	pa.add_argument(
+		"-s", "--stranded", dest="stranded",
+		choices=("yes", "no", "reverse"), default="yes",
+		help="Whether the data is from a strand-specific assay. Specify 'yes', " +
+		"'no', or 'reverse' (default: yes). " +
+		"'reverse' means 'yes' with reversed strand interpretation")
 
-
-	# parser.addArgument("-m", "--mincount")
-				# ~ .help("min TOTAL counts for given transcript, default 5").required(false).setDefault(5).dest("mincount");
+	pa.add_argument(
+		"-q", "--quiet", action="store_true", dest="quiet",
+		help="Suppress progress report")  # and warnings" )
+	
 	args = pa.parse_args()
 
 	# Clean file
@@ -301,45 +300,12 @@ def main():
 		args.featuretype,
 		args.idattr,
 		args.multimapped,
-		'yes',
-		20,
-		False)
-	# ~ try:
-		# ~ # type idattr stranded quiet
-		# ~ count_reads_by_position_in_features(
-			# ~ args.samfilenames,
-			# ~ args.featuresfilename,
-			# ~ 'exon',
-			# ~ 'ID',
-			# ~ 'yes',
-			# ~ 20,
-			# ~ False)
-        # ~ count_reads_in_features(
-                # ~ args.samfilenames,
-                # ~ args.featuresfilename,
-                # ~ args.samtype,
-                # ~ args.order,
-                # ~ args.max_buffer_size,
-                # ~ args.stranded,
-                # ~ args.mode,
-                # ~ args.nonunique,
-                # ~ args.secondary_alignments,
-                # ~ args.supplementary_alignments,
-                # ~ args.featuretype,
-                # ~ args.idattr,
-                # ~ args.additional_attr,
-                # ~ args.quiet,
-                # ~ args.minaqual,
-                # ~ args.samouts)
-	# ~ except:
-		# ~ print("Error")
-		# ~ sys.stderr.write("  %s\n" % str(sys.exc_info()[1]))
-		# ~ sys.stderr.write("  [Exception type: %s, raised in %s:%d]\n" %
-						# ~ (sys.exc_info()[1].__class__.__name__,
-						# ~ os.path.basename(traceback.extract_tb(
-							# ~ sys.exc_info()[2])[-1][0]),
-							# ~ traceback.extract_tb(sys.exc_info()[2])[-1][1]))
+		args.stranded,
+		args.minaqual,
+		args.minlength,
+		args.quiet)
 	sys.exit(1)
+
 
 if __name__ == "__main__":
 	main()
