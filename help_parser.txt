@@ -1,12 +1,17 @@
-conda create --name nextPARSParser  python=3 
+# conda create --name nextPARSParser  python=3 
 source activate nextPARSParser
 
 # Packages
-conda install -c bioconda htseq
+# conda install -c bioconda htseq
  
 # Usage
 cd /home/uchorostecki/lab/software/nextPARSParser/
-time  python parser_test.py \
+time  python nextPARSParser.py \
 	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/mapping/1-V1-23_35265_ATCACG.fastq.gzAligned.sortedByCoord.out.bam \
 	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/DB/C_parapsilosis_plus_individual.gff \
-	-o /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/ 1_all.csv
+	-o /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/1_all.csv
+
+awk -F';|\t'  '{ for(i=1; i<=NF;i++) j+=$i; print $1"\t"j; j=0 }' 1-V1-23_35265_ATCACGAligned.sortedByCoord.out_V1.tab > original.csv
+awk -F';|\t'  '{ for(i=1; i<=NF;i++) j+=$i; print $1"\t"j; j=0 }' 1-V1-23_35265_ATCACGAligned.sortedByCoord.out_V1.tab.new_version > new_version.csv
+
+join -a1 -j 1 -o 1.1,1.2,2.2 <(sort -k1 original.csv) <(sort -k1 new_version.csv) > merged.csv
