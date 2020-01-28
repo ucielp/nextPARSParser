@@ -219,20 +219,16 @@ def main():
 		"format and a feature file in GFF format and calculates for each feature " +
 		"the number of reads mapping to each position")
 	
-	# multiple bams
-	# ~ pa.add_argument(
-			# ~ "samfilenames", nargs='+', type=str,
-			# ~ help="Path to the SAM/BAM files containing the mapped reads. " +
-			# ~ "If '-' is selected, read from standard input")
-	
+
 	pa.add_argument(
-			"samfilenames", type=str,
-			help="Path to the SAM/BAM files containing the mapped reads. " +
+			"-b", "--bamfilename", dest="bamfilename", type=str,
+			help="Path to the SAM/BAM file containing the mapped reads. " +
 			"If '-' is selected, read from standard input")
 
 	pa.add_argument(
-			"featuresfilename", type=str,
+			"-g", "--gtffile", dest="gtffile", type=str,
 			help="Path to the GTF file containing the features")
+			
 	pa.add_argument(
 			"-f", "--format", dest="samtype",
 			choices=("sam", "bam"), default="sam",
@@ -294,8 +290,8 @@ def main():
 	with open(args.samouts, 'w'):
 		pass
 	count_reads_by_position_in_features(
-		args.samfilenames,
-		args.featuresfilename,
+		args.bamfilename,
+		args.gtffile,
 		args.samouts,
 		args.featuretype,
 		args.idattr,

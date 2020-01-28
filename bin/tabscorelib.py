@@ -232,8 +232,8 @@ def align_calls_ignore(molname, bpnucs, verbose, last50, knots=None):
         clustal_file.close()
         
         if bpnucs and not verbose:
-            print colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan')
-            print colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan')
+            print (colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan'))
+            print (colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan'))
                         
         #collect list of nucleotides with position in reference, determine if it should be a knot to be ignored
         n = 0
@@ -274,7 +274,7 @@ def align_calls_ignore(molname, bpnucs, verbose, last50, knots=None):
         append_refi = ref_indices.append
         append_expi = exp_indices.append
         append_noti = not_in_full.append
-        for i in xrange(len(refseq)):
+        for i in range(len(refseq)):
             if refseq[i] == expseq[i] or (refseq[i] == 'U' and expseq[i] == 'T') or (refseq[i] == 'T' and expseq[i] == 'U'):
                 if len(reflist[i]) <= 2:    #Take only those that match in alignment and are not in list of ignored positions
                     append_refi(reflist[i][1])
@@ -287,10 +287,10 @@ def align_calls_ignore(molname, bpnucs, verbose, last50, knots=None):
             exp_indices = [x for x in exp_indices if x < len(actual_expseq)-50] #Retain by using command line option '-l' or '--last50'
     
         if verbose:
-            print colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan')
-            print colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan')
-            print colored("ref_indices", 'green'), ref_indices, colored(len(ref_indices), 'cyan')
-            print colored("exp_indices", 'green'), exp_indices, colored(len(exp_indices), 'cyan')
+            print (colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan'))
+            print (colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan'))
+            print (colored("ref_indices", 'green'), ref_indices, colored(len(ref_indices), 'cyan'))
+            print (colored("exp_indices", 'green'), exp_indices, colored(len(exp_indices), 'cyan'))
         mol_seq = refseq.replace('-','')
     except IOError:
         try:
@@ -303,14 +303,14 @@ def align_calls_ignore(molname, bpnucs, verbose, last50, knots=None):
         mol_seq = [line.strip() for line in fasta_file.readlines() if not line.startswith('>')]
         fasta_file.close()
         mol_seq = ''.join(mol_seq)
-        ref_indices = [x for x in xrange(len(mol_seq))]
+        ref_indices = [x for x in range(len(mol_seq))]
         if last50:
             ref_indices = ref_indices[:-50]
         exp_indices = ref_indices
         not_in_full = []
     
         if verbose:
-            print colored("sequence", 'green'), mol_seq, colored(len(mol_seq), 'cyan')
+            print (colored("sequence", 'green'), mol_seq, colored(len(mol_seq), 'cyan'))
         
     return ref_indices, exp_indices, mol_seq, not_in_full
 #####################################################################################
@@ -335,7 +335,7 @@ def align_calls(molname, verbose, last50):
         ref_nuc, exp_nuc = 0, 0
         full_ref_seq = ''
         full_exp_seq = ''
-        for i in xrange(len(refseq)):
+        for i in range(len(refseq)):
             if refseq[i] != '-':
                 full_ref_seq += refseq[i]
                 if refseq[i] == expseq[i] or (refseq[i] == 'U' and expseq[i] == 'T') or (refseq[i] == 'T' and expseq[i] == 'U'):
@@ -372,11 +372,11 @@ def align_calls(molname, verbose, last50):
 #        print
 
         if verbose:
-            print colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan')
-            print colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan')
-            print colored("match_in_ref", 'green'), match_in_ref, colored(len(match_in_ref), 'cyan')
-            print colored("exp_indices", 'green'), exp_indices, colored(len(exp_indices), 'cyan')
-            print
+            print (colored("refseq", 'green'), refseq, colored(len(refseq), 'cyan'))
+            print (colored("expseq", 'green'), expseq, colored(len(expseq), 'cyan'))
+            print (colored("match_in_ref", 'green'), match_in_ref, colored(len(match_in_ref), 'cyan'))
+            print (colored("exp_indices", 'green'), exp_indices, colored(len(exp_indices), 'cyan'))
+            print()
 
     except IOError:
         try:
@@ -414,13 +414,13 @@ def align_calls(molname, verbose, last50):
         full_exp_seq = ''.join(full_exp_seq)
         full_ref_seq = full_exp_seq
         
-        exp_indices = [x for x in xrange(len(full_exp_seq))]
+        exp_indices = [x for x in range(len(full_exp_seq))]
         match_in_ref = exp_indices
         exp_fill_in = []
         last50_matches = 50
     
         if verbose:
-            print colored("sequence", 'green'), full_exp_seq, colored(len(full_exp_seq), 'cyan')
+            print (colored("sequence", 'green'), full_exp_seq, colored(len(full_exp_seq), 'cyan'))
         
     return exp_indices, match_in_ref, exp_fill_in, full_ref_seq, full_exp_seq, last50_matches
 
@@ -437,9 +437,9 @@ def normList_to_average(L, uncapped_L, filename, last50, last50_matches, verbose
         
     if verbose:
         if mean < 5:
-            print "%s \t %f \t" %(filename, mean), colored('*Not included', 'red')
+            print ("%s \t %f \t" %(filename, mean), colored('*Not included', 'red'))
         else:
-            print "%s \t %f" %(filename, mean)
+            print ("%s \t %f" %(filename, mean))
 #    return [x/mean for x in L if mean >= 1], mean   ##Since some tab files have mostly 0s and thus mean = 0, do not include those
     if mean >= 5:# or molname == '226_neg_ROX2':
         return [x/mean for x in L], mean   ##Mean >= 1 since some tab files have mostly 0s and thus mean = 0, include only files with average call per position of at least 1
@@ -485,16 +485,16 @@ def exclude_underexpressed(L, filename, verbose):
     mean=np.mean(L)
     if verbose:
         if mean < 1:
-            print "%s \t %f \t *Not included" %(filename, mean)
+            print ("%s \t %f \t *Not included" %(filename, mean))
         else:
-            print "%s \t %f" %(filename, mean)
+            print ("%s \t %f" %(filename, mean))
     return [x for x in L if mean >= 1], mean
 #####################################################################################
 def normList_to_average_log(L, filename, verbose):
     '''Normalize values of a list to average and get the log2'''
     mean=np.mean(L)
     if verbose:
-        print "%s \t" %(filename), mean
+        print ("%s \t" %(filename), mean)
 #    l=[]
 #    print l
 #    for x in L: 
@@ -533,9 +533,9 @@ def cap_to_percentile(L, cap):
 def windows(combined, window):
     '''Return list of average scores in given window for each position.'''
     win_avg = []
-    for i in xrange(len(combined)):
+    for i in range(len(combined)):
         avg = []
-        for j in xrange(-window, window+1):   #Uses j adjacent positions
+        for j in range(-window, window+1):   #Uses j adjacent positions
             if len(combined) >= i+j+1:
 #                print i+j
                 avg.append(combined[i+j])       #At beginning of sequence, will wrap around to end of sequence for -j positions
@@ -559,7 +559,7 @@ def calculations(real, strict):
     append_c = correct_x.append
     append_i = incorrect_x.append
     append_u = undet_x.append
-    for i in xrange(len(real) if len(real) < len(strict) else len(strict)):
+    for i in range(len(real) if len(real) < len(strict) else len(strict)):
         if (strict[i] == 1.0 and real[i] == 1):# or (strict[i] == -1.0 and real[i] == 0):
             tp += 1
             append_c(i)

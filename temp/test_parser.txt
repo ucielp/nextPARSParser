@@ -38,16 +38,32 @@ https://downloads.yeastgenome.org/sequence/S288C_reference/genome_releases/
 # #BAM files
 /home/uchorostecki/lab/tg/jwillis/lncRNA_PROJECT/2017-01-19
 
+cd /home/uchorostecki/lab/software/nextPARSParser/bin
 
 python nextPARSParser.py 
 ATCACG.fastq.gzAligned.sortedByCoord.out.bam …./C_parapsilosis_plus_individual.gff -o ….csv
 python nextPARSParser.py \
-	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/mapping/1-V1-23_35265_ATCACG.fastq.gzAligned.sortedByCoord.out.bam \
-	/home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/DB/C_parapsilosis_plus_individual.gff \
-	-o /home/uchorostecki/lab/uchorostecki/projects/MULTI-FOLDS/nextPARS/temperatures/processing/htseq-count/1_all.csv \
-	-t exon \
-	
-	
-	
-	
+	-b ../data/bam/1-V1-23_35265_ATCACG.fastq.gzAligned.sortedByCoord.out.bam \
+	-g ../data/DB/S288C_reference_genome_R64-2-1_20150113/C_parapsilosis_plus_individual.gff \
+	-o ../data/tab/1-V1-23.csv \
+	-t exon 
+
+cd /home/uchorostecki/lab/software/nextPARSParser/data/tab
+python ../../bin/reformat_PARSparser_output.py -t 1_V1.tab -m 50
+python ../../bin/reformat_PARSparser_output.py -t 2_S1.tab -m 50
+python ../../bin/reformat_PARSparser_output.py -t 3_V1.tab -m 50
+python ../../bin/reformat_PARSparser_output.py -t 4_S1.tab -m 50
+
+cd /home/uchorostecki/lab/software/nextPARSParser/bin
+
+python get_combined_score.py \
+ -i U1  \
+ -inDir ../data/tab \
+ -o ../data/score/U1_score.RNN.tab \
+ -f ../data/fasta/U1.fa
+ 
+# Estas las dejo fuera
+# --nP_only ../data/score/U1_score.csv \
+# -v	
+
 

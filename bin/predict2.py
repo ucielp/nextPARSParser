@@ -23,7 +23,6 @@ parser.add_argument('-f' ,  dest='fastaFilename', metavar='fastaFilename', type=
 parser.add_argument('-p' ,  dest='parScoreFileName',metavar='parScoreFileName', type=str, help="Input Pars Score tab file", required=True)
 parser.add_argument('-w1' ,  dest='w1',metavar='w1', type=float, help="Weight for RNN score. Default 0.5", default=0.5)
 parser.add_argument('-w2' ,  dest='w2',metavar='w2', type=float, help="Weight for Pars score. Default 0.5", default=0.5)
-
 parser.add_argument('-o' , dest="outfileName",metavar="outputfileName",default="scores.tab", type=str, help="Final Score tab file.")
 
 args = parser.parse_args()

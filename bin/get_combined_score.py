@@ -22,7 +22,7 @@ def bp_nucs(calls, mol_seq):
     '''Count number of times each nucleotide is in a paired position and return list of them with their position in sequence'''
     mol_seq = ['U' if n=='T' else n for n in mol_seq]
     nucs = []
-    for i in xrange(len(mol_seq)):
+    for i in range(len(mol_seq)):
         if calls[i] == 1:
             nucs.append((mol_seq[i], i+1))
 #    print 'Nucs in pairs:', nucs, len(nucs)
@@ -35,12 +35,12 @@ def bp_nucs(calls, mol_seq):
         elif n[0] == 'C':   c += 1
         elif n[0] == 'A':   a += 1
         elif n[0] == 'U':   u += 1
-    print 'G = %i' %g
-    print 'C = %i' %c
-    print 'A = %i' %a
-    print 'U = %i' %u
-    print 'Total = %i' %(g+c+a+u)
-    print '\n'
+    print ('G = %i' %g)
+    print ('C = %i' %c)
+    print ('A = %i' %a)
+    print ('U = %i' %u)
+    print ('Total = %i' %(g+c+a+u))
+    print ('\n')
     return nucs
 #####################################################################################
 def pairs_from_ref_ct(molname):
@@ -48,8 +48,8 @@ def pairs_from_ref_ct(molname):
     if molname == 'TETp4p6':
         ct_file = open('%s/STRUCTURES/REFERENCE_STRUCTURES/%s.ct' %(data,molname), 'r')
 #        ct_file = open('%s/STRUCTURES/REFERENCE_STRUCTURES/%s-PDB.ct' %(data,molname), 'r')
-    elif molname == 'SRA' or molname == 'B2' or molname == 'U1':
-        ct_file = open('%s/STRUCTURES/REFERENCE_STRUCTURES/%s-ref.ct' %(data,molname), 'r')
+    # ~ elif molname == 'SRA' or molname == 'B2' or molname == 'U1':
+        # ~ ct_file = open('%s/STRUCTURES/REFERENCE_STRUCTURES/%s-ref.ct' %(data,molname), 'r')
     else:
         ct_file = open('%s/STRUCTURES/REFERENCE_STRUCTURES/%s.ct' %(data,molname), 'r')
     
@@ -116,15 +116,15 @@ def pairs_from_ref_ct(molname):
     cc[1] /= 2
     
     plist = sorted([gc, au, gu, ac, ga, cu, aa, gg, uu, cc], key=lambda x: x[1], reverse=True)
-    print colored('Pairs in reference:', 'yellow')
+    print (colored('Pairs in reference:', 'yellow'))
     i = 0
     for pair in plist:
         if pair[1] != 0:
-            print pair[0], '=', pair[1], 'pairs'
+            print (pair[0], '=', pair[1], 'pairs')
             i += 1
     if i == 0:
-        print colored('No pairs', 'red')
-    print '\n'
+        print (colored('No pairs', 'red'))
+    print ('\n')
     return pairs_ct
 #####################################################################################
 def correct_bps(paired_nucs, pairs_ct):
@@ -187,15 +187,15 @@ def correct_bps(paired_nucs, pairs_ct):
     cc[1] /= 2
     
     plist = sorted([gc, au, gu, ac, ga, cu, aa, gg, uu, cc], key=lambda x: x[1], reverse=True)
-    print colored('Pairs correct in predicted:', 'yellow')
+    print (colored('Pairs correct in predicted:', 'yellow'))
     i = 0
     for pair in plist:
         if pair[1] != 0:
-            print pair[0], '=', pair[1], 'pairs'
+            print (pair[0], '=', pair[1], 'pairs')
             i += 1
     if i == 0:
-        print colored('No pairs', 'red')
-    print '\n'                
+        print (colored('No pairs', 'red'))
+    print ('\n')
 
 #####################################################################################
 #####################################################################################
@@ -203,7 +203,7 @@ def correct_bps(paired_nucs, pairs_ct):
 def removepos(combined, correct_x, incorrect_x, corfile, incfile):
     cor_pos = []
     inc_pos = []
-    for i in xrange(len(combined)):
+    for i in range(len(combined)):
         if i in correct_x:
             cor_pos.append(i)   #Create list of indices of correct positions
         elif i in incorrect_x:
@@ -329,16 +329,16 @@ def get_tabfilelist_nextPARS(molname, exp_dir=None):
                                     S1_tabs.append(l)
                                     s_exps.append(exp)
                                 else:
-                                    print "The tab files should indicate which enzyme was used (V1/S1)"
-                                    print "Please rename them accordingly"
+                                    print ("The tab files should indicate which enzyme was used (V1/S1)")
+                                    print ("Please rename them accordingly")
                                     exit()
                                 break
             
             return V1_tabs, S1_tabs, molname, v_exps, s_exps, None # return None in place of hte variable real_path, which wont be used in this case
                 
         else:
-            print "If not using one of the provided test molecules as input, please include a path containing files with the given input molecule"
-            print "EX:  $ python get_combined_score.py -i <input molecule> -indir <directory_of_input_files>"
+            print ("If not using one of the provided test molecules as input, please include a path containing files with the given input molecule")
+            print ("EX:  $ python get_combined_score.py -i <input molecule> -indir <directory_of_input_files>")
             exit()
 #####################################################################################
 def readtabfile_nextPARS(tabFile):
@@ -394,7 +394,7 @@ def get_enzyme_profiles(flist, oldFileOrganization, tabnames, misalign, exp_indi
     try:
         enz_norm = tsl.normList_to1(enz)
     except ValueError:
-        print colored('Insufficient average coverage in %s experiments' %enz_name,'red',attrs=['bold','underline'])
+        print (colored('Insufficient average coverage in %s experiments' %enz_name,'red',attrs=['bold','underline']))
         low_coverage_flag = 1
         enz_norm = []
     
@@ -564,8 +564,8 @@ def main():
     
     # get V1 and S1 profiles
     if options.verbose:
-        print
-        print colored("Tabfile \t Avg. counts per site", "cyan")
+        print()
+        print (colored("Tabfile \t Avg. counts per site", "cyan"))
     V, V_norm, low_coverage_flag, included_v = get_enzyme_profiles(V1, options.oldFileOrganization, v_exps, options.misalign, exp_indices, 
                                                                    options.PARScalc, options.capto, options.last50, last50_matches, 
                                                                    options.verbose, molname_full, low_coverage_flag, "V1", molname, real_path)
@@ -577,7 +577,7 @@ def main():
     ####################
     # exit if coverage is too low
     if low_coverage_flag == 1:
-        print 'Try again later with better PARS data...Now exiting program'
+        print ('Try again later with better PARS data...Now exiting program')
         exit()
         
     ####################
@@ -627,7 +627,7 @@ def main():
         else:
             seq_len = len(full_ref_seq)
         
-        for i in xrange(seq_len):
+        for i in range(seq_len):
             if (type(match_in_ref)==list and i in match_in_ref) or match_in_ref == 'all_indices':
                 append_cf(combined[f])
                 f += 1
@@ -636,7 +636,7 @@ def main():
                 z+=1
                 zer.append(i)
             else:
-                print colored('bad %s' %i, 'red')
+                print (colored('bad %s' %i, 'red'))
 #        print combined_full, len(combined_full), z, f
 #        print colored('zer', 'red'), zer, len(zer)
         combined = combined_full
@@ -687,6 +687,7 @@ def main():
     out.write(score_tab)      ##Creates file with scores in tab format
     out.close()
     
+    # options.nP_only:
     # Finally, run the RNN model calculation of scores
     os.system("python predict2.py -f %s -p %s.tmp.out -o %s.RNN.tab_tmp 2> /dev/null" %(fas_temp, molname, molname))
     os.system("rm %s.tmp.out" %molname)
@@ -705,11 +706,11 @@ def main():
     
     
     if options.verbose:
-        print
-        print '%s V1 files and %s S1 files included' %(colored(str(included_v),'cyan'), colored(str(included_s),'cyan'))
-        print colored("Combined", 'green'), combined, colored(len(combined), 'cyan')
+        print()
+        print ('%s V1 files and %s S1 files included' %(colored(str(included_v),'cyan'), colored(str(included_s),'cyan')))
+        print (colored("Combined", 'green'), combined, colored(len(combined), 'cyan'))
         if full_ref_seq != "all_indices": #since these values will all be 0s because no CT file was available
-            print colored("Real Calls", 'green'), real_calls, colored(len(real_calls), 'cyan')
+            print (colored("Real Calls", 'green'), real_calls, colored(len(real_calls), 'cyan'))
             
         
 #################### Strict calls and percentages ##############################
@@ -770,7 +771,7 @@ def main():
             incfile.close()
             good_stricts = []
             good_reals = []
-            for x in xrange(len(strict_calls)):
+            for x in range(len(strict_calls)):
                 if str(x) not in Is:
                     good_stricts.append(strict_calls[x])    #Positions excluding those incorrect under 80% of conditions
                     good_reals.append(real_calls[x])
@@ -781,19 +782,19 @@ def main():
             
 
         if options.verbose and full_ref_seq != "all_indices": #since these values will all be 0s because no CT file was available
-            print colored('ACC', 'green'), '= %f%% of predicted values that are correct' %(ACC)
-            print colored('PPV', 'green'), '= %f%% of predicted pairs that are actually in real calls' %(PPV)
-            print colored('Correct', 'green'), '= %f%% of predicted values match real calls' %(cor)
+            print (colored('ACC', 'green'), '= %f%% of predicted values that are correct' %(ACC))
+            print (colored('PPV', 'green'), '= %f%% of predicted pairs that are actually in real calls' %(PPV))
+            print (colored('Correct', 'green'), '= %f%% of predicted values match real calls' %(cor))
 #            print correct_y, colored("Correct " + str(len(correct_y)), 'cyan')
-            print colored('  correct indices', 'cyan'), correct_x, colored("%s/%s correct" %(len(correct_x),len(strict_calls)), 'cyan')
-            print colored('Incorrect', 'green'), '= %f%% of predicted values match real calls' %(inc)
+            print (colored('  correct indices', 'cyan'), correct_x, colored("%s/%s correct" %(len(correct_x),len(strict_calls)), 'cyan'))
+            print (colored('Incorrect', 'green'), '= %f%% of predicted values match real calls' %(inc))
 #            print incorrect_y, colored("Incorrect " + str(len(incorrect_y)), 'cyan')
-            print colored('  incorrect indices', 'cyan'), incorrect_x, colored("%s/%s incorrect" %(len(incorrect_x),len(strict_calls)), 'cyan')
-            print colored('Undetermined', 'green'), '= %f%% of predicted values do not meet given threshold' %(und)
+            print (colored('  incorrect indices', 'cyan'), incorrect_x, colored("%s/%s incorrect" %(len(incorrect_x),len(strict_calls)), 'cyan'))
+            print (colored('Undetermined', 'green'), '= %f%% of predicted values do not meet given threshold' %(und))
 #            print undet_y, colored("Undetermined " + str(len(undet_y)), 'cyan')
-            print colored('  undetermined indices', 'cyan'), undet_x, colored("%s/%s undetermined" %(len(undet_x),len(strict_calls)), 'cyan')
-            print colored('Sensitivity', 'green'), '= %f%%' %sen
-            print colored('FPR', 'green'), '= %.2f%%' %fpr
+            print (colored('  undetermined indices', 'cyan'), undet_x, colored("%s/%s undetermined" %(len(undet_x),len(strict_calls)), 'cyan'))
+            print (colored('Sensitivity', 'green'), '= %f%%' %sen)
+            print (colored('FPR', 'green'), '= %.2f%%' %fpr)
 
 ######################  Outputs  ####################################
     
@@ -834,9 +835,9 @@ def main():
         
         for t in np.linspace(0.1,0.8,15):
             if '%.2f' %t == '%.2f' %options.thresh:
-                for row in xrange(rppv.nrows):
+                for row in range(rppv.nrows):
                     if rppv.cell_value(row,0) == 'T=%.2f' %options.thresh:
-                        for row in xrange(row+1, row+6):
+                        for row in range(row+1, row+6):
                             if rcor.cell_value(row, 0).startswith(molname):
                                 wppv.write(row, col, '%.2f%%' %(ACC))
                                 wcor.write(row, col, '%i (%.2f%%)' %(len(correct_y), cor))
@@ -897,6 +898,11 @@ def main():
         out = open(options.output, 'w')
         out.write(score_tab)      ##Creates file with scores in tab format
         out.close()
+		
+        classifier_file ='%s.RNN.tab' %molname
+
+        if os.path.isfile(classifier_file):
+            os.system("rm %s" %classifier_file)
     
     elif options.nP_only:
         score_tab = []
@@ -941,7 +947,7 @@ def main():
             elif c == 0.0:
                 s = 'NA'
             append_st(str(s))
-        print score_tab, molname
+        print (score_tab, molname)
         tsl.colormap('%s/%s_spp.colormap' %(src,molname), score_tab, options.threshvarna)
     elif options.varna.upper() in ['SNORM','SN','S_NORM','S1']:
         enz_norm = [str(round(x,4)) for x in S_norm]
@@ -968,7 +974,7 @@ def main():
             if line.startswith('>'+molname):
                 Is = line.split('\t')[1].strip()
                 Is = Is.split(' ')
-        print 'Is', Is, type(Is), type(Is[0])
+        print ('Is', Is, type(Is), type(Is[0]))
         corfile.close()
         incfile.close()
         #TODO: use Is to ignore these positions when calculating percents => implement in align_calls function(??)
@@ -988,24 +994,24 @@ def main():
 #        for x,y,z in zip(V_win, S_win, combined):
         for x,y,z in zip(V_win_norm, S_win_norm, combined):
             if z >= options.thresh or z <= options.thresh*(-1.0):
-                print (x,y,z)
+                print ((x,y,z))
             else:
-                print 'Not above threshold'
+                print ('Not above threshold')
 
 
 ######################  Determine nucleotides  ####################################
     if options.bpnucs:
-        print colored('Predicted paired nucs:', 'yellow')
+        print (colored('Predicted paired nucs:', 'yellow'))
         strict_nucs = bp_nucs(strict_calls, full_exp_seq)
         
-        print colored('Real paired nucs:', 'yellow')
+        print (colored('Real paired nucs:', 'yellow'))
         real_nucs = bp_nucs(real_calls, full_exp_seq)
         
         paired_nucs = []
         for n in strict_nucs:
             if n in real_nucs:
                 paired_nucs.append(n)
-        print colored('In both','green'), paired_nucs, len(paired_nucs), '\n'
+        print (colored('In both','green'), paired_nucs, len(paired_nucs), '\n')
         
         pairs_ct = pairs_from_ref_ct(molname)
         
