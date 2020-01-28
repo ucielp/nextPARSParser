@@ -1,0 +1,8 @@
+# The nextPARSParser is the name of the image and has to be all lowercase letters. The last dot indicates that the dockerfile is expected to be in the same folder.
+
+
+# Start deamon
+systemctl start docker
+
+cd /home/uchorostecki/lab/software/nextPARSParser_docker/
+docker build -t nextparsparser . 
